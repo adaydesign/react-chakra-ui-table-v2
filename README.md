@@ -3,4 +3,7 @@
 ## Installation
 
 
+## Demo
+
+https://chakra-table-v2.netlify.app/
 

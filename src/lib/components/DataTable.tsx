@@ -65,7 +65,7 @@ import {
   import { Dispatch, SetStateAction, useMemo, useState } from "react"
   import { getNumformat } from "../utils/formatters"
   
-  export const DEFAULT_PAGES = [25, 50, 100]
+  export const DEFAULT_PAGES = [20, 50, 100]
   
   export const NoDataDisplay = () => {
     return (
@@ -450,7 +450,7 @@ import {
                       isChecked={table.getIsAllColumnsVisible()}
                       onChange={table.getToggleAllColumnsVisibilityHandler()}
                     >
-                      แสดงทั้งหมด
+                      All
                     </Checkbox>
                   </HStack>
                   <Divider orientation="horizontal" my={1} />
@@ -557,7 +557,7 @@ import {
               old?.[1],
             ])
           }
-          placeholder={`Min ${
+          placeholder={`min ${
             column.getFacetedMinMaxValues()?.[0]
               ? `(${column.getFacetedMinMaxValues()?.[0]})`
               : ""
@@ -575,7 +575,7 @@ import {
               e.target.value,
             ])
           }
-          placeholder={`Max ${
+          placeholder={`max ${
             column.getFacetedMinMaxValues()?.[1]
               ? `(${column.getFacetedMinMaxValues()?.[1]})`
               : ""
@@ -594,7 +594,7 @@ import {
           size="sm"
           value={(columnFilterValue ?? "") as string}
           onChange={(e) => column.setFilterValue(e.target.value)}
-          placeholder={`ค้นหา... (${column.getFacetedUniqueValues().size})`}
+          placeholder={`find... (${column.getFacetedUniqueValues().size})`}
           list={column.id + "list"}
         />
       </Flex>
