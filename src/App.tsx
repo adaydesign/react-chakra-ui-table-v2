@@ -2,8 +2,8 @@ import { ChakraProvider, Flex, Link } from "@chakra-ui/react"
 
 import { useEffect, useRef, useState } from "react"
 import { createColumnHelper } from "@tanstack/react-table"
-import { DataTable, getNumformat, getSummary } from "./lib"
-// import {DataTable, getNumformat, getSummary} from "react-chakra-ui-table-v2"
+import {DataTable, getNumformat, getSummary} from "react-chakra-ui-table-v2"
+
 type TodoItem = {
   id: number
   name: string

@@ -186,7 +186,7 @@ return (
 ## Functions
 
 ```ts
-import { DataTable, getNumformat, getSummary } from "react-chakra-ui-table-v2"
+import { DataTable, getNumformat, getSummary, getCurrency } from "react-chakra-ui-table-v2"
 ```
 
 | Function Name |
