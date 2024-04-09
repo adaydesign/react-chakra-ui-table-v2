@@ -1,6 +1,18 @@
 # React Chakra UI Table v2
 
-## Installation
+## Features
+
+- React v.18
+- Chakra UI v.2.8
+- Tanstack Table V.8
+- Custom Title, Columns and Data
+- Custom Pagination
+- Filter and Sorting in columns
+- Show or Hide columns
+- Export data to CSV and PDF file
+- Print
+
+## Pre Requirement Installation
 
 ### npm
 
@@ -15,24 +27,31 @@ Copy dependencies below to package.json
     "export-to-csv": "^1.2.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.1",
+    "react-icons": "^4.11.0",
 
     (... your dependencies ...)
 }
 ```
-and then run command ``npm i`` to install packages
+
+and then run command `npm i` to install packages
+
 ```
 $ npm i
+```
+
+## Install Package
+
+```
+npm i react-chakra-ui-table-v2
 ```
 
 ## Example Code
 
 ```tsx
 import { ChakraProvider, Flex, Link } from "@chakra-ui/react"
-import { DataTable } from "./lib/components"
 import { useEffect, useRef, useState } from "react"
 import { createColumnHelper } from "@tanstack/react-table"
-import { getNumformat } from "./lib/utils/formatters"
-import { getSummary } from "./lib/components/DataTable"
+import { DataTable, getNumformat, getSummary } from "react-chakra-ui-table-v2"
 
 type TodoItem = {
   id: number
@@ -164,6 +183,23 @@ return (
 | data     | Array                                |
 | title    | string(optional)                     |
 
+## Functions
+
+```ts
+import { DataTable, getNumformat, getSummary } from "react-chakra-ui-table-v2"
+```
+
+| Function Name |
+| ------------- |
+| DataTable     |
+| getSummary    |
+| getCurrency   |
+| getNumformat  |
+
 ## Demo
 
 https://chakra-table-v2.netlify.app/
+
+## Demo Screenshot
+
+![Screenshot](https://raw.githubusercontent.com/adaydesign/react-chakra-ui-table-v2/main/public/demo.png)

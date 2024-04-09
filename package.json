@@ -1,11 +1,20 @@
 {
   "name": "react-chakra-ui-table-v2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React component for Data Table using Chakra UI and Tanstack Table V.8",
-  "keywords": ["react","data table","component","chakra ui","table"],
+  "keywords": [
+    "react",
+    "data table",
+    "component",
+    "chakra ui",
+    "table"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.js",
-  "files": ["dist","README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "author": "Chalermchon Samana <aday.3ddesign@gmail.com>",
   "homepage": "https://www.appcodemia.com",
   "license": "MIT",
@@ -31,6 +40,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.1",
     "react": "^18.2.0",
+    "react-chakra-ui-table-v2": "^1.0.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0"
   },
