@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adaydesign/react-image-slide-chakra"
+    "url": "git+https://github.com/adaydesign/react-chakra-ui-table-v2"
   },
   "type": "module",
   "scripts": {
