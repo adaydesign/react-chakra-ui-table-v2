@@ -36,14 +36,16 @@ Copy dependencies below to package.json
 and then run command `npm i` to install packages
 
 ```
-$ npm i
+> npm i
 ```
 
 ## Install Package
 
 ```
-npm i react-chakra-ui-table-v2
+> npm i react-chakra-ui-table-v2
 ```
+
+see more : https://www.npmjs.com/package/react-chakra-ui-table-v2
 
 ## Example Code
 
@@ -186,19 +188,24 @@ return (
 ## Functions
 
 ```ts
-import { DataTable, getNumformat, getSummary, getCurrency } from "react-chakra-ui-table-v2"
+import {
+  DataTable,
+  getNumformat,
+  getSummary,
+  getCurrency,
+} from "react-chakra-ui-table-v2"
 ```
 
-| Function Name |
-| ------------- |
-| DataTable     |
-| getSummary    |
-| getCurrency   |
-| getNumformat  |
+| Function Name | Description                               |
+| ------------- | ----------------------------------------- |
+| DataTable     | Main Component                            |
+| getSummary    | Util function for summary number          |
+| getCurrency   | Util function for display currency format |
+| getNumformat  | Util function for display number format   |
 
 ## Demo
 
-https://chakra-table-v2.netlify.app/
+web demo : https://chakra-table-v2.netlify.app/
 
 ## Demo Screenshot
 

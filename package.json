@@ -1,9 +1,10 @@
 {
   "name": "react-chakra-ui-table-v2",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React component for Data Table using Chakra UI and Tanstack Table V.8",
   "keywords": [
     "react",
+    "react table",
     "data table",
     "component",
     "chakra ui",
