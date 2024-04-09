@@ -1,4 +1,4 @@
-import { ChakraProvider, Flex, Image, Link } from "@chakra-ui/react"
+import { ChakraProvider, Flex, Link } from "@chakra-ui/react"
 import { DataTable } from "./lib/components"
 import { useEffect, useRef, useState } from "react"
 import { createColumnHelper } from "@tanstack/react-table"
