@@ -1,7 +1,6 @@
 import { ChakraProvider, Flex, Link } from "@chakra-ui/react";
-
 import { useEffect, useRef, useState } from "react";
-import { FilterFn, Row, createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable, getSummary } from "./lib/components/DataTable";
 import { getNumformat } from "./lib";
 import { booleanFilterFn, dateRangeFilterFn } from "./lib/utils/filters";
