@@ -113,7 +113,7 @@ export type DataTableProps<Data extends object> = {
 
 export function DataTable<Data extends object>({
   title = "Table",
-  data,
+  data = [],
   columns,
   isLoading = false,
 }: DataTableProps<Data>) {
