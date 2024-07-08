@@ -1,18 +1,49 @@
-import { ChakraProvider, Flex, Link } from "@chakra-ui/react"
+import { ChakraProvider, Flex, Link } from "@chakra-ui/react";
 
-import { useEffect, useRef, useState } from "react"
-import { createColumnHelper } from "@tanstack/react-table"
-import {DataTable, getNumformat, getSummary} from "react-chakra-ui-table-v2"
+import { useEffect, useRef, useState } from "react";
+import { FilterFn, Row, createColumnHelper } from "@tanstack/react-table";
+import { DataTable, getSummary } from "./lib/components/DataTable";
+import { getNumformat } from "./lib";
 
 type TodoItem = {
-  id: number
-  name: string
-  title: string
-  value: number
-  completed: boolean
+  id: number;
+  name: string;
+  title: string;
+  value: number;
+  completed: boolean;
+  date: Date;
+  hairColor: HairColor;
+};
+
+enum HairColor {
+  BLONDE = "Blonde",
+  BROWN = "Brown",
+  RED = "Red",
 }
 
-const columnHelper = createColumnHelper<TodoItem>()
+const dateRangeFilterFn: FilterFn<any> = (
+  row: Row<any>,
+  columnId: string,
+  filterValue: [Date, Date]
+) => {
+  const [startDate, endDate] = filterValue;
+  const rowDate = new Date(row.getValue(columnId));
+
+  if (!startDate || !endDate) return true; // If no range is selected, show all rows
+
+  return rowDate >= startDate && rowDate <= endDate;
+};
+
+const booleanFilterFn: FilterFn<any> = (
+  row: Row<any>,
+  columnId: string,
+  filterValue: boolean
+) => {
+  const rowValue = row.getValue(columnId);
+  return filterValue === rowValue;
+};
+
+const columnHelper = createColumnHelper<TodoItem>();
 // Example Table
 const TodoListTable = () => {
   const columns = [
@@ -36,44 +67,86 @@ const TodoListTable = () => {
     columnHelper.accessor("completed", {
       cell: (info) => (info.getValue() ? "✅" : "❌"),
       header: "Completed",
+      filterFn: booleanFilterFn,
     }),
-  ]
+    columnHelper.accessor("date", {
+      cell: (info) => info.getValue().toLocaleString(),
+      header: "Date",
+      filterFn: dateRangeFilterFn,
+    }),
+    columnHelper.accessor("hairColor", {
+      cell: (info) => info.getValue(),
+      header: "Hair Color",
+      meta: {
+        columnType: "enum",
+      },
+    }),
+  ];
 
-  const [data, setData] = useState(null)
+  const [data, setData] = useState(null);
 
-  const loadData: any = useRef()
+  const loadData: any = useRef();
   loadData.current = async () => {
     const urls = [
       "https://jsonplaceholder.typicode.com/users",
       "https://jsonplaceholder.typicode.com/todos",
-    ]
+    ];
     try {
       const result = await Promise.all(
         urls.map((url) => fetch(url).then((r) => r.json()))
-      )
+      );
 
       if (result.length === 2) {
         // index 0 is user
         // index 1 is todo
-        const todoList = result[1].map((todo: any) => {
-          todo.user = result[0].find((i: any) => i.id === todo.userId)
-          todo.name = todo.user?.name
-          todo.value = Math.round(Math.random() * 100)
-          return todo
-        })
+        const todoList = result[1].map((todo: any, index: number) => {
+          todo.user = result[0].find((i: any) => i.id === todo.userId);
+          todo.name = todo.user?.name;
+          todo.value = Math.round(Math.random() * 100);
 
-        setData(todoList)
+          const firstDayJanuary2024UnixTime = 1704063600000;
+          const lastDayMay2024UnixTime = 1717192799000;
+          const randomUnixTime =
+            Math.floor(
+              (lastDayMay2024UnixTime - firstDayJanuary2024UnixTime) *
+                Math.random()
+            ) + firstDayJanuary2024UnixTime;
+          todo.date = new Date(randomUnixTime);
+
+          switch (index % 3) {
+            case 0:
+              todo.hairColor = HairColor.BLONDE;
+
+              break;
+
+            case 1:
+              todo.hairColor = HairColor.BROWN;
+
+              break;
+
+            case 2:
+              todo.hairColor = HairColor.RED;
+              break;
+
+            default:
+              todo.hairColor = HairColor.RED;
+              break;
+          }
+          return todo;
+        });
+
+        setData(todoList);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     if (loadData.current) {
-      loadData.current()
+      loadData.current();
     }
-  }, [])
+  }, []);
 
   return (
     data && (
@@ -83,8 +156,8 @@ const TodoListTable = () => {
         title="Example Table by React Chakra UI Table v.2"
       />
     )
-  )
-}
+  );
+};
 
 function App() {
   return (
@@ -110,7 +183,7 @@ function App() {
         <TodoListTable />
       </Flex>
     </ChakraProvider>
-  )
+  );
 }
 
-export default App
+export default App;
