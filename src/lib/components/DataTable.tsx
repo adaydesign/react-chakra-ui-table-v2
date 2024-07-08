@@ -60,7 +60,7 @@ import { FaFileCsv, FaPrint, FaRegFilePdf, FaTrash } from "react-icons/fa6";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { getNumformat } from "../utils/formatters";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
 
@@ -646,7 +646,6 @@ const Filter = ({ column, table }: FilterProps) => {
                 old?.[0],
                 e.target.value,
               ]);
-              const filters = column.getFilterValue();
             }}
             placeholder={`max ${
               column.getFacetedMinMaxValues()?.[1]
