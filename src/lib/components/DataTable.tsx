@@ -747,6 +747,20 @@ const Filter = ({ column, table }: FilterProps) => {
         </Flex>
       );
 
+    case "string":
+      return (
+        <Flex w="full">
+          <Input
+            type="text"
+            size="sm"
+            value={(columnFilterValue ?? "") as string}
+            onChange={(e) => column.setFilterValue(e.target.value)}
+            placeholder={`find...`}
+            list={column.id + "list"}
+          />
+        </Flex>
+      );
+
     default:
       return (
         <Flex w="full">
@@ -755,7 +769,7 @@ const Filter = ({ column, table }: FilterProps) => {
             size="sm"
             value={(columnFilterValue ?? "") as string}
             onChange={(e) => column.setFilterValue(e.target.value)}
-            placeholder={`find... (${column.getFacetedUniqueValues().size})`}
+            placeholder={`find...`}
             list={column.id + "list"}
           />
         </Flex>
