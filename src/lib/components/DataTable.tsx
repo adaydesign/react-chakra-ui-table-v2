@@ -62,7 +62,7 @@ import "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { getNumformat } from "../utils/formatters";
-import { RangeDatepicker } from "chakra-dayzed-datepicker";
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 export const DEFAULT_PAGES = [20, 50, 100];
 export const DEFAULT_MAX_THRESHOLD_STRING_DROPDOWN = 15;
@@ -659,15 +659,39 @@ const Filter = ({ column, table }: FilterProps) => {
     case "date":
       return (
         <HStack w="full" spacing={1}>
-          <RangeDatepicker
-            selectedDates={
-              (columnFilterValue as [Date, Date]) ?? [undefined, undefined]
+          <SingleDatepicker
+            name="start-date-input"
+            date={(columnFilterValue as [Date, Date])?.[0] ?? undefined}
+            onDateChange={(newStartDate) =>
+              column.setFilterValue((old: [Date, Date]) => [
+                newStartDate,
+                old?.[1],
+              ])
             }
-            onDateChange={(e) => column.setFilterValue(e)}
             propsConfigs={{
               inputProps: {
                 size: "sm",
-                placeholder: "choose...",
+                placeholder: "from...",
+              },
+            }}
+            configs={{
+              dateFormat: "yyyy-MM-dd",
+            }}
+          />
+
+          <SingleDatepicker
+            name="end-date-input"
+            date={(columnFilterValue as [Date, Date])?.[1] ?? undefined}
+            onDateChange={(newEndDate) =>
+              column.setFilterValue((old: [Date, Date]) => [
+                old?.[0],
+                newEndDate,
+              ])
+            }
+            propsConfigs={{
+              inputProps: {
+                size: "sm",
+                placeholder: "to...",
               },
             }}
             configs={{

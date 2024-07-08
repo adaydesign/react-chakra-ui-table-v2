@@ -29,9 +29,10 @@ const dateRangeFilterFn: FilterFn<any> = (
   const [startDate, endDate] = filterValue;
   const rowDate = new Date(row.getValue(columnId));
 
-  if (!startDate || !endDate) return true; // If no range is selected, show all rows
-
-  return rowDate >= startDate && rowDate <= endDate;
+  if (!startDate && !endDate) return true; // If no range is selected, show all rows
+  if (!endDate) return rowDate >= startDate; // Filter only with start date
+  if (!startDate) return rowDate <= endDate; // Filter only with end date
+  return rowDate >= startDate && rowDate <= endDate; // Filter with both
 };
 
 const booleanFilterFn: FilterFn<any> = (
