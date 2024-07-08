@@ -620,8 +620,18 @@ const Filter = ({ column, table }: FilterProps) => {
           <Input
             type="number"
             size="sm"
-            min={Number(column.getFacetedMinMaxValues()?.[0] ?? "")}
-            max={Number(column.getFacetedMinMaxValues()?.[1] ?? "")}
+            min={Number(
+              column.getFacetedMinMaxValues()?.[0] !== undefined &&
+                column.getFacetedMinMaxValues()?.[0] !== null
+                ? column.getFacetedMinMaxValues()?.[0]
+                : ""
+            )}
+            max={Number(
+              column.getFacetedMinMaxValues()?.[1] !== undefined &&
+                column.getFacetedMinMaxValues()?.[1] !== null
+                ? column.getFacetedMinMaxValues()?.[1]
+                : ""
+            )}
             value={(columnFilterValue as [number, number])?.[0] ?? ""}
             onChange={(e) =>
               column.setFilterValue((old: [number, number]) => [
@@ -630,7 +640,8 @@ const Filter = ({ column, table }: FilterProps) => {
               ])
             }
             placeholder={`min ${
-              column.getFacetedMinMaxValues()?.[0]
+              column.getFacetedMinMaxValues()?.[0] !== undefined &&
+              column.getFacetedMinMaxValues()?.[0] !== null
                 ? `(${column.getFacetedMinMaxValues()?.[0]})`
                 : ""
             }`}
@@ -638,8 +649,18 @@ const Filter = ({ column, table }: FilterProps) => {
           <Input
             type="number"
             size="sm"
-            min={Number(column.getFacetedMinMaxValues()?.[0] ?? "")}
-            max={Number(column.getFacetedMinMaxValues()?.[1] ?? "")}
+            min={Number(
+              column.getFacetedMinMaxValues()?.[0] !== undefined &&
+                column.getFacetedMinMaxValues()?.[0] !== null
+                ? column.getFacetedMinMaxValues()?.[0]
+                : ""
+            )}
+            max={Number(
+              column.getFacetedMinMaxValues()?.[1] !== undefined &&
+                column.getFacetedMinMaxValues()?.[1] !== null
+                ? column.getFacetedMinMaxValues()?.[1]
+                : ""
+            )}
             value={(columnFilterValue as [number, number])?.[1] ?? ""}
             onChange={(e) => {
               column.setFilterValue((old: [number, number]) => [
@@ -648,7 +669,8 @@ const Filter = ({ column, table }: FilterProps) => {
               ]);
             }}
             placeholder={`max ${
-              column.getFacetedMinMaxValues()?.[1]
+              column.getFacetedMinMaxValues()?.[1] !== undefined &&
+              column.getFacetedMinMaxValues()?.[1] !== null
                 ? `(${column.getFacetedMinMaxValues()?.[1]})`
                 : ""
             }`}

@@ -103,7 +103,7 @@ const TodoListTable = () => {
         const todoList = result[1].map((todo: any, index: number) => {
           todo.user = result[0].find((i: any) => i.id === todo.userId);
           todo.name = todo.user?.name;
-          todo.value = Math.round(Math.random() * 100);
+          todo.value = Math.floor(Math.random() * 100); // floor to have some 0s
 
           const firstDayJanuary2024UnixTime = 1704063600000;
           const lastDayMay2024UnixTime = 1717192799000;
