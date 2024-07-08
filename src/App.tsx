@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FilterFn, Row, createColumnHelper } from "@tanstack/react-table";
 import { DataTable, getSummary } from "./lib/components/DataTable";
 import { getNumformat } from "./lib";
+import { booleanFilterFn, dateRangeFilterFn } from "./lib/utils/filters";
 
 type TodoItem = {
   id: number;
@@ -20,29 +21,6 @@ enum HairColor {
   BROWN = "Brown",
   RED = "Red",
 }
-
-const dateRangeFilterFn: FilterFn<any> = (
-  row: Row<any>,
-  columnId: string,
-  filterValue: [Date, Date]
-) => {
-  const [startDate, endDate] = filterValue;
-  const rowDate = new Date(row.getValue(columnId));
-
-  if (!startDate && !endDate) return true; // If no range is selected, show all rows
-  if (!endDate) return rowDate >= startDate; // Filter only with start date
-  if (!startDate) return rowDate <= endDate; // Filter only with end date
-  return rowDate >= startDate && rowDate <= endDate; // Filter with both
-};
-
-const booleanFilterFn: FilterFn<any> = (
-  row: Row<any>,
-  columnId: string,
-  filterValue: boolean
-) => {
-  const rowValue = row.getValue(columnId);
-  return filterValue === rowValue;
-};
 
 const columnHelper = createColumnHelper<TodoItem>();
 // Example Table
