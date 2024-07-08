@@ -143,10 +143,22 @@ const TodoListTable = () => {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
+    setIsLoading(true);
+
     if (loadData.current) {
       loadData.current();
     }
+
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
   }, []);
 
   return (
@@ -155,6 +167,7 @@ const TodoListTable = () => {
         columns={columns}
         data={data}
         title="Example Table by React Chakra UI Table v.2"
+        isLoading={isLoading}
       />
     )
   );

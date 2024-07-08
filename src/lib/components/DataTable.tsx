@@ -27,6 +27,7 @@ import {
   UseDisclosureReturn,
   useDisclosure,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -82,16 +83,39 @@ export const NoDataDisplay = () => {
   );
 };
 
+export const LoadingDataDisplay = () => {
+  return (
+    <Flex
+      direction="column"
+      p={4}
+      align="center"
+      justify="center"
+      bgColor="gray.100"
+    >
+      <Spinner
+        size="xl"
+        boxSize="70px"
+        thickness="0.25rem"
+        mb={3}
+        color="gray.400"
+      />
+      <Text>Loading Data</Text>
+    </Flex>
+  );
+};
+
 export type DataTableProps<Data extends object> = {
   title?: string;
   data: Data[] | undefined;
   columns: ColumnDef<Data, any>[];
+  isLoading?: boolean;
 };
 
 export function DataTable<Data extends object>({
   title = "Table",
   data,
   columns,
+  isLoading = false,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -249,31 +273,15 @@ export function DataTable<Data extends object>({
               );
             })}
           </Thead>
-          {data && data?.length > 0 && (
+          {isLoading ? (
             <Tbody>
-              {table.getRowModel().rows?.map((row, index) => (
-                <Tr
-                  key={`body-${row.id}-${index}`}
-                  _hover={{ shadow: "md", bg: "blackAlpha.50" }}
-                >
-                  {row.getVisibleCells().map((cell, indexCell) => {
-                    return (
-                      <Td
-                        key={`body-cell-${row.id}-${cell.id}-${indexCell}`}
-                        whiteSpace="normal"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              ))}
+              <Tr>
+                <Td colSpan={countMaxColumns}>
+                  <LoadingDataDisplay />
+                </Td>
+              </Tr>
             </Tbody>
-          )}
-          {(data == null || data == undefined || data?.length == 0) && (
+          ) : data == null || data == undefined || data?.length == 0 ? (
             <Tbody>
               <Tr>
                 <Td colSpan={countMaxColumns}>
@@ -281,6 +289,32 @@ export function DataTable<Data extends object>({
                 </Td>
               </Tr>
             </Tbody>
+          ) : (
+            data &&
+            data?.length > 0 && (
+              <Tbody>
+                {table.getRowModel().rows?.map((row, index) => (
+                  <Tr
+                    key={`body-${row.id}-${index}`}
+                    _hover={{ shadow: "md", bg: "blackAlpha.50" }}
+                  >
+                    {row.getVisibleCells().map((cell, indexCell) => {
+                      return (
+                        <Td
+                          key={`body-cell-${row.id}-${cell.id}-${indexCell}`}
+                          whiteSpace="normal"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                ))}
+              </Tbody>
+            )
           )}
           <Tfoot>
             {table.getFooterGroups().map((footerGroup: any, index: number) => (
