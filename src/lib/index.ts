@@ -1,4 +1,4 @@
-import { DataTable, getSummary } from "./components/DataTable";
+import { DataTable, getSummary, ColumnType } from "./components/DataTable";
 import { getCurrency, getNumformat } from "./utils/formatters";
 import { dateRangeFilterFn, booleanFilterFn } from "./utils/filters";
 
@@ -10,3 +10,5 @@ export {
   dateRangeFilterFn,
   booleanFilterFn,
 };
+
+export type { ColumnType };

@@ -55,6 +55,7 @@ import {
   Table as RETable,
   Column,
   getFilteredRowModel,
+  VisibilityState,
 } from "@tanstack/react-table";
 import { GoFilter, GoInbox, GoLinkExternal, GoTasklist } from "react-icons/go";
 import { FaFileCsv, FaPrint, FaRegFilePdf, FaTrash } from "react-icons/fa6";
@@ -109,6 +110,9 @@ export type DataTableProps<Data extends object> = {
   data: Data[] | undefined;
   columns: ColumnDef<Data, any>[];
   isLoading?: boolean;
+  initialSortingState?: SortingState;
+  initialColumnVisibility?: VisibilityState;
+  initialColumnFilters?: ColumnFiltersState;
 };
 
 export function DataTable<Data extends object>({
@@ -116,11 +120,16 @@ export function DataTable<Data extends object>({
   data = [],
   columns,
   isLoading = false,
+  initialSortingState = [],
+  initialColumnVisibility = {},
+  initialColumnFilters = [],
 }: DataTableProps<Data>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  // show filter input
+  const [sorting, setSorting] = useState<SortingState>(initialSortingState);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    initialColumnVisibility
+  );
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>(initialColumnFilters);
   const filterDisclosure = useDisclosure();
 
   const table = useReactTable({
@@ -833,7 +842,7 @@ const Filter = ({ column, table }: FilterProps) => {
   }
 };
 
-type VariableType =
+export type ColumnType =
   | "string"
   | "number"
   | "boolean"
@@ -845,7 +854,7 @@ type VariableType =
   | "null"
   | "unknown";
 
-function getType(variable: any): VariableType {
+function getType(variable: any): ColumnType {
   if (variable === null) {
     return "null";
   }
