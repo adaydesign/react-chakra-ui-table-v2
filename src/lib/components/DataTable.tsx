@@ -39,6 +39,7 @@ import {
   SearchIcon,
   TriangleDownIcon,
   TriangleUpIcon,
+  WarningTwoIcon,
 } from "@chakra-ui/icons";
 import {
   useReactTable,
@@ -67,7 +68,6 @@ import { getNumformat } from "../utils/formatters";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 export const DEFAULT_PAGES = [20, 50, 100];
-export const DEFAULT_MAX_THRESHOLD_STRING_DROPDOWN = 15;
 
 export const NoDataDisplay = () => {
   return (
@@ -105,11 +105,29 @@ export const LoadingDataDisplay = () => {
   );
 };
 
+export const ErrorDisplay = ({ message }: { message: string }) => {
+  const DEFAULT_ERROR_MESSAGE = "Error";
+
+  return (
+    <Flex
+      direction="column"
+      p={4}
+      align="center"
+      justify="center"
+      bgColor="gray.100"
+    >
+      <Icon as={WarningTwoIcon} boxSize="70px" mb={3} color="gray.400" />
+      <Text>{message ?? DEFAULT_ERROR_MESSAGE}</Text>
+    </Flex>
+  );
+};
+
 export type DataTableProps<Data extends object> = {
   title?: string;
   data: Data[] | undefined;
   columns: ColumnDef<Data, any>[];
   isLoading?: boolean;
+  error?: { message: string } | any;
   initialSortingState?: SortingState;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
@@ -120,6 +138,7 @@ export function DataTable<Data extends object>({
   data = [],
   columns,
   isLoading = false,
+  error = undefined,
   initialSortingState = [],
   initialColumnVisibility = {},
   initialColumnFilters = [],
@@ -287,6 +306,14 @@ export function DataTable<Data extends object>({
               <Tr>
                 <Td colSpan={countMaxColumns}>
                   <LoadingDataDisplay />
+                </Td>
+              </Tr>
+            </Tbody>
+          ) : error ? (
+            <Tbody>
+              <Tr>
+                <Td colSpan={countMaxColumns}>
+                  <ErrorDisplay message={error.message ?? undefined} />
                 </Td>
               </Tr>
             </Tbody>
