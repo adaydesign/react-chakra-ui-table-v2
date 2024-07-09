@@ -455,46 +455,60 @@ export function DataTable<Data extends object>({
 }
 
 // Table Controller component
-interface TableControllerProps {
+export type TableControllerProps<Data extends object> = {
+  //interface TableControllerProps {
   title: string;
-  table: any;
-  data: any;
+  table: RETable<Data>;
+  data: Data[];
   filterDisclosure: UseDisclosureReturn;
   setColumnFilters: Dispatch<SetStateAction<ColumnFiltersState>>;
-}
-const TableController = ({
+};
+function TableController<Data extends object>({
   title,
   table,
   data,
   filterDisclosure,
   setColumnFilters,
-}: TableControllerProps) => {
+}: TableControllerProps<Data>) {
   function getExportFileBlob(
-    columns: any,
-    data: any,
+    columns: Column<Data, unknown>[],
+    data: Data[],
     fileType: string,
     fileName: string
   ) {
     const header = columns
-      .filter((c: any) => c.getIsVisible())
-      .map((column: any) => {
+      .filter((c) => c.getIsVisible())
+      .map((column) => {
         return {
           id: column.id,
           name: column.columnDef?.header,
         };
       });
 
-    const headerNames = header.map((c: any) => c.name);
+    const headerNames = header.map((c) => c.name);
 
+    // CSV
     if (fileType === "csv") {
       const csvConfig = mkConfig({
-        columnHeaders: header.map((c: any) => c.id),
+        columnHeaders: header.map((c) => c.id),
         filename: fileName,
       });
-      const csv = generateCsv(csvConfig)(data);
+
+      // Transform data to the expected format
+      const formattedData = data.map((row) => {
+        const formattedRow: { [key: string]: unknown } = {};
+        for (const key in row) {
+          if (Object.prototype.hasOwnProperty.call(row, key)) {
+            formattedRow[key] = (row as any)[key];
+          }
+        }
+        return formattedRow;
+      });
+
+      const csv = generateCsv(csvConfig)(formattedData);
       download(csvConfig)(csv);
     }
-    //PDF example
+    // PDF
     else if (fileType === "pdf" || fileType === "pdf-print") {
       const listData = data.map((d: any) => {
         const value: any = [];
@@ -655,7 +669,7 @@ const TableController = ({
       </Flex>
     </Flex>
   );
-};
+}
 
 // Filter Component
 interface FilterProps {
