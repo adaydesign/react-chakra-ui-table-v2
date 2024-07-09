@@ -57,6 +57,7 @@ import {
   Column,
   getFilteredRowModel,
   VisibilityState,
+  Row,
 } from "@tanstack/react-table";
 import { GoFilter, GoInbox, GoLinkExternal, GoTasklist } from "react-icons/go";
 import { FaFileCsv, FaPrint, FaRegFilePdf, FaTrash } from "react-icons/fa6";
@@ -456,7 +457,6 @@ export function DataTable<Data extends object>({
 
 // Table Controller component
 export type TableControllerProps<Data extends object> = {
-  //interface TableControllerProps {
   title: string;
   table: RETable<Data>;
   data: Data[];
@@ -472,7 +472,7 @@ function TableController<Data extends object>({
 }: TableControllerProps<Data>) {
   function getExportFileBlob(
     columns: Column<Data, unknown>[],
-    data: Data[],
+    data: Row<Data>[],
     fileType: string,
     fileName: string
   ) {
@@ -486,6 +486,7 @@ function TableController<Data extends object>({
       });
 
     const headerNames = header.map((c) => c.name);
+    const rowData = data.map((row) => row.original);
 
     // CSV
     if (fileType === "csv") {
@@ -495,7 +496,7 @@ function TableController<Data extends object>({
       });
 
       // Transform data to the expected format
-      const formattedData = data.map((row) => {
+      const formattedRowData = rowData.map((row) => {
         const formattedRow: { [key: string]: unknown } = {};
         for (const key in row) {
           if (Object.prototype.hasOwnProperty.call(row, key)) {
@@ -505,12 +506,12 @@ function TableController<Data extends object>({
         return formattedRow;
       });
 
-      const csv = generateCsv(csvConfig)(formattedData);
+      const csv = generateCsv(csvConfig)(formattedRowData);
       download(csvConfig)(csv);
     }
     // PDF
     else if (fileType === "pdf" || fileType === "pdf-print") {
-      const listData = data.map((d: any) => {
+      const listData = rowData.map((d: any) => {
         const value: any = [];
         header.map((c: any) => value.push(d[c.id]));
         return value;
@@ -629,7 +630,7 @@ function TableController<Data extends object>({
                 onClick={() => {
                   getExportFileBlob(
                     table.getAllColumns(),
-                    data,
+                    table.getPrePaginationRowModel().rows,
                     "csv",
                     "report-file"
                   );
@@ -642,7 +643,7 @@ function TableController<Data extends object>({
                 onClick={() => {
                   getExportFileBlob(
                     table.getAllColumns(),
-                    data,
+                    table.getPrePaginationRowModel().rows,
                     "pdf",
                     "report-file"
                   );
@@ -655,7 +656,7 @@ function TableController<Data extends object>({
                 onClick={() => {
                   getExportFileBlob(
                     table.getAllColumns(),
-                    data,
+                    table.getPrePaginationRowModel().rows,
                     "pdf-print",
                     "report-file"
                   );
