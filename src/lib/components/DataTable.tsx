@@ -486,7 +486,18 @@ function TableController<Data extends object>({
       });
 
     const headerNames = header.map((c) => c.name);
-    const rowData = data.map((row) => row.original);
+    const rowData = data.map((row) => {
+      console.log({ row });
+      const originalRow: any = { ...row.original };
+      Object.keys(originalRow).forEach((key) => {
+        const value = originalRow[key];
+        if (value instanceof Date) {
+          // Check if the value is a Date object
+          originalRow[key] = value.toLocaleString(); // Convert the date to a locale string
+        }
+      });
+      return originalRow;
+    });
 
     // CSV
     if (fileType === "csv") {
@@ -495,18 +506,7 @@ function TableController<Data extends object>({
         filename: fileName,
       });
 
-      // Transform data to the expected format
-      const formattedRowData = rowData.map((row) => {
-        const formattedRow: { [key: string]: unknown } = {};
-        for (const key in row) {
-          if (Object.prototype.hasOwnProperty.call(row, key)) {
-            formattedRow[key] = (row as any)[key];
-          }
-        }
-        return formattedRow;
-      });
-
-      const csv = generateCsv(csvConfig)(formattedRowData);
+      const csv = generateCsv(csvConfig)(rowData as any);
       download(csvConfig)(csv);
     }
     // PDF
