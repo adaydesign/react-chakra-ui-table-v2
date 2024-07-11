@@ -487,7 +487,6 @@ function TableController<Data extends object>({
 
     const headerNames = header.map((c) => c.name);
     const rowData = data.map((row) => {
-      console.log({ row });
       const originalRow: any = { ...row.original };
       Object.keys(originalRow).forEach((key) => {
         const value = originalRow[key];
