@@ -564,7 +564,9 @@ function TableController<Data extends object>({
       </Flex>
       <Flex w="full" align="center">
         <Text color="gray.500">
-          Result found {getNumformat(data?.length)} record(s)
+          Result found{" "}
+          {getNumformat(table.getPrePaginationRowModel().rows.length)} record
+          {table.getPrePaginationRowModel().rows.length > 1 && "s"}
         </Text>
         <Spacer />
         <HStack align="center">
