@@ -189,7 +189,6 @@ export function DataTable<Data extends object>({
     <Flex direction="column" w="full">
       <TableController
         title={title}
-        data={data}
         table={table}
         filterDisclosure={filterDisclosure}
         setColumnFilters={setColumnFilters}
@@ -459,14 +458,12 @@ export function DataTable<Data extends object>({
 export type TableControllerProps<Data extends object> = {
   title: string;
   table: RETable<Data>;
-  data: Data[];
   filterDisclosure: UseDisclosureReturn;
   setColumnFilters: Dispatch<SetStateAction<ColumnFiltersState>>;
 };
 function TableController<Data extends object>({
   title,
   table,
-  data,
   filterDisclosure,
   setColumnFilters,
 }: TableControllerProps<Data>) {
