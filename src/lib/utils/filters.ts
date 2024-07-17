@@ -22,3 +22,12 @@ export const booleanFilterFn: FilterFn<any> = (
   const rowValue = row.getValue(columnId);
   return filterValue === rowValue;
 };
+
+export const multiEnumFilterFn: FilterFn<any> = (
+  row: Row<any>,
+  columnId: string,
+  filterValue: string[]
+) => {
+  const rowValue: string = row.getValue(columnId);
+  return filterValue.includes(rowValue);
+};

@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable, getSummary } from "./lib/components/DataTable";
 import { getNumformat } from "./lib";
-import { booleanFilterFn, dateRangeFilterFn } from "./lib/utils/filters";
+import {
+  booleanFilterFn,
+  dateRangeFilterFn,
+  multiEnumFilterFn,
+} from "./lib/utils/filters";
 
 type TodoItem = {
   id: number;
@@ -56,8 +60,9 @@ const TodoListTable = () => {
       cell: (info) => info.getValue(),
       header: "Hair Color",
       meta: {
-        columnType: "enum",
+        columnType: "multienum",
       },
+      filterFn: multiEnumFilterFn,
     }),
   ];
 

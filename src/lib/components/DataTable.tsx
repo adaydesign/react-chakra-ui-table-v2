@@ -28,6 +28,7 @@ import {
   useDisclosure,
   Box,
   Spinner,
+  CheckboxGroup,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -849,6 +850,28 @@ const Filter = ({ column, table }: FilterProps) => {
               </option>
             ))}
           </Select>
+        </Flex>
+      );
+
+    case "multienum":
+      return (
+        <Flex w="full">
+          <CheckboxGroup
+            defaultValue={sortedUniqueValues.slice(0, 5000)}
+            onChange={(e) => column.setFilterValue(e)}
+            value={
+              (column.getFilterValue() ||
+                sortedUniqueValues.slice(0, 5000)) as string[]
+            }
+          >
+            <VStack align="start">
+              {sortedUniqueValues.slice(0, 5000).map((value: any) => (
+                <Checkbox value={value} key={value}>
+                  {value}
+                </Checkbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
         </Flex>
       );
 
