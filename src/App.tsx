@@ -151,6 +151,7 @@ const TodoListTable = () => {
         title="Example Table by React Chakra UI Table v.2"
         isLoading={isLoading}
         initialSortingState={[{ id: "name", desc: true }]}
+        filterIsOpen={true}
       />
     )
   );

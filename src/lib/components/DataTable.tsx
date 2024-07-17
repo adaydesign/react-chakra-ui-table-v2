@@ -133,6 +133,7 @@ export type DataTableProps<Data extends object> = {
   initialSortingState?: SortingState;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
+  filterIsOpen?: boolean;
 };
 
 export function DataTable<Data extends object>({
@@ -144,6 +145,7 @@ export function DataTable<Data extends object>({
   initialSortingState = [],
   initialColumnVisibility = {},
   initialColumnFilters = [],
+  filterIsOpen = false,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(initialSortingState);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -151,7 +153,9 @@ export function DataTable<Data extends object>({
   );
   const [columnFilters, setColumnFilters] =
     useState<ColumnFiltersState>(initialColumnFilters);
-  const filterDisclosure = useDisclosure();
+  const filterDisclosure = useDisclosure({
+    defaultIsOpen: filterIsOpen,
+  });
 
   const table = useReactTable({
     columns,
