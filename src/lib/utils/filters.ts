@@ -31,3 +31,16 @@ export const multiEnumFilterFn: FilterFn<any> = (
   const rowValue: string = row.getValue(columnId);
   return filterValue.includes(rowValue);
 };
+
+export const arrayFilterFn: FilterFn<any> = (
+  row: Row<any>,
+  columnId: string,
+  filterValue: string[]
+) => {
+  const rowValue: string[] = row.getValue(columnId);
+  if (!rowValue || !rowValue.length) {
+    return true;
+  }
+
+  return filterValue.some((filterItem) => rowValue.includes(filterItem));
+};

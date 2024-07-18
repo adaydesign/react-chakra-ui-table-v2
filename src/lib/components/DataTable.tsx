@@ -687,12 +687,28 @@ const Filter = ({ column, table }: FilterProps) => {
 
   const columnFilterValue = column.getFilterValue();
 
+  const columnType = getType(firstValue);
+  const facets = column?.getFacetedUniqueValues();
+  // Custom facets if keys is array then sum the equal value and remove duplicate
+  const customFacets = new Map();
+  for (const [key, value] of facets as any) {
+    if (Array.isArray(key)) {
+      for (const k of key) {
+        const prevValue = customFacets.get(k) || 0;
+        customFacets.set(k, prevValue + value);
+      }
+    } else {
+      const prevValue = customFacets.get(key) || 0;
+      customFacets.set(key, prevValue + value);
+    }
+  }
+
   const sortedUniqueValues = useMemo(
     () =>
-      typeof firstValue === "number"
+      columnType === "number" || columnType === "date"
         ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-    [column.getFacetedUniqueValues()]
+        : Array.from(customFacets.keys()).sort(),
+    [customFacets]
   );
 
   const meta = column.columnDef.meta as { columnType: string };
@@ -816,7 +832,7 @@ const Filter = ({ column, table }: FilterProps) => {
         <HStack w="full" spacing={1}>
           <Select
             id={column.id + "list"}
-            placeholder={`select... (${column.getFacetedUniqueValues().size})`}
+            placeholder={`select... (${customFacets.size})`}
             size="sm"
             onChange={(e) => {
               column.setFilterValue(
@@ -843,7 +859,7 @@ const Filter = ({ column, table }: FilterProps) => {
         <Flex w="full">
           <Select
             id={column.id + "list"}
-            placeholder={`select... (${column.getFacetedUniqueValues().size})`}
+            placeholder={`select... (${customFacets.size})`}
             size="sm"
             onChange={(e) => column.setFilterValue(e.target.value)}
             value={(column.getFilterValue() as string | number) || ""}
@@ -858,6 +874,28 @@ const Filter = ({ column, table }: FilterProps) => {
       );
 
     case "multienum":
+      return (
+        <Flex w="full">
+          <CheckboxGroup
+            defaultValue={sortedUniqueValues.slice(0, 5000)}
+            onChange={(e) => column.setFilterValue(e)}
+            value={
+              (column.getFilterValue() ||
+                sortedUniqueValues.slice(0, 5000)) as string[]
+            }
+          >
+            <VStack align="start">
+              {sortedUniqueValues.slice(0, 5000).map((value: any) => (
+                <Checkbox value={value} key={value}>
+                  {value}
+                </Checkbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
+        </Flex>
+      );
+
+    case "array":
       return (
         <Flex w="full">
           <CheckboxGroup

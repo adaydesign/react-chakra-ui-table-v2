@@ -4,6 +4,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable, getSummary } from "./lib/components/DataTable";
 import { getNumformat } from "./lib";
 import {
+  arrayFilterFn,
   booleanFilterFn,
   dateRangeFilterFn,
   multiEnumFilterFn,
@@ -17,6 +18,7 @@ type TodoItem = {
   completed: boolean;
   date: Date;
   hairColor: HairColor;
+  foods: string[];
 };
 
 enum HairColor {
@@ -64,6 +66,11 @@ const TodoListTable = () => {
       },
       filterFn: multiEnumFilterFn,
     }),
+    columnHelper.accessor("foods", {
+      cell: (info) => info.getValue(),
+      header: "Eats",
+      filterFn: arrayFilterFn,
+    }),
   ];
 
   const [data, setData] = useState(null);
@@ -78,6 +85,8 @@ const TodoListTable = () => {
       const result = await Promise.all(
         urls.map((url) => fetch(url).then((r) => r.json()))
       );
+
+      const foods = ["meat", "vegan", "lactose"];
 
       if (result.length === 2) {
         // index 0 is user
@@ -96,23 +105,26 @@ const TodoListTable = () => {
             ) + firstDayJanuary2024UnixTime;
           todo.date = new Date(randomUnixTime);
 
-          switch (index % 3) {
+          switch (index % 4) {
             case 0:
               todo.hairColor = HairColor.BLONDE;
+              todo.foods = foods.slice(0, 1);
 
               break;
 
             case 1:
               todo.hairColor = HairColor.BROWN;
-
+              todo.foods = foods.slice(0, 2);
               break;
 
             case 2:
               todo.hairColor = HairColor.RED;
+              todo.foods = foods.slice(0, 3);
               break;
 
             default:
               todo.hairColor = HairColor.RED;
+              todo.foods = [];
               break;
           }
           return todo;
