@@ -29,6 +29,7 @@ import {
   Box,
   Spinner,
   CheckboxGroup,
+  Tooltip,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -570,6 +571,20 @@ function TableController<Data extends object>({
           {getNumformat(table.getPrePaginationRowModel().rows.length)} record
           {table.getPrePaginationRowModel().rows.length > 1 && "s"}
         </Text>
+        {table.getCoreRowModel().rows.length >
+          table.getPrePaginationRowModel().rows.length && (
+          <>
+            <span style={{ paddingLeft: "0.5rem" }}></span>
+            <Tooltip
+              label={`${
+                table.getCoreRowModel().rows.length -
+                table.getPrePaginationRowModel().rows.length
+              } rows hidden by filters`}
+            >
+              <WarningTwoIcon boxSize="1.5rem" color="yellow.400" />
+            </Tooltip>
+          </>
+        )}
         <Spacer />
         <HStack align="center">
           {filterDisclosure && (
