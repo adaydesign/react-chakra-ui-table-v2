@@ -569,7 +569,7 @@ function TableController<Data extends object>({
         <Text color="gray.500">
           Result found{" "}
           {getNumformat(table.getPrePaginationRowModel().rows.length)} record
-          {table.getPrePaginationRowModel().rows.length > 1 && "s"}
+          {table.getPrePaginationRowModel().rows.length !== 1 && "s"}
         </Text>
         {table.getCoreRowModel().rows.length >
           table.getPrePaginationRowModel().rows.length && (
