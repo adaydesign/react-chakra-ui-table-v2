@@ -23,13 +23,22 @@ export const booleanFilterFn: FilterFn<any> = (
   return filterValue === rowValue;
 };
 
+export const enumFilterFn: FilterFn<any> = (
+  row: Row<any>,
+  columnId: string,
+  filterValue: string
+) => {
+  const rowValue: string = row.getValue(columnId);
+  return filterValue === rowValue;
+};
+
 export const multiEnumFilterFn: FilterFn<any> = (
   row: Row<any>,
   columnId: string,
   filterValue: string[]
 ) => {
   const rowValue: string = row.getValue(columnId);
-  return filterValue.includes(rowValue);
+  return filterValue.some((value) => rowValue === value);
 };
 
 export const arrayFilterFn: FilterFn<any> = (
@@ -42,5 +51,7 @@ export const arrayFilterFn: FilterFn<any> = (
     return true;
   }
 
-  return filterValue.some((filterItem) => rowValue.includes(filterItem));
+  return filterValue.some((filterItem) =>
+    rowValue.some((value) => value === filterItem)
+  );
 };
