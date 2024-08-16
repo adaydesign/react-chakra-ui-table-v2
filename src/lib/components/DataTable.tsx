@@ -162,6 +162,7 @@ export function DataTable<Data extends object>({
     columns,
     data: data || [],
     initialState: { pagination: { pageSize: DEFAULT_PAGES[0] } },
+    autoResetPageIndex: false,
     state: {
       sorting,
       columnVisibility,
