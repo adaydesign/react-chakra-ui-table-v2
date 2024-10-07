@@ -135,7 +135,7 @@ export type DataTableProps<Data extends object> = {
   initialSortingState?: SortingState;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
-  initialPageSize: PageSize;
+  initialPageSize?: PageSize;
   filterIsOpen?: boolean;
 };
 
