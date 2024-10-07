@@ -70,7 +70,8 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { getNumformat } from "../utils/formatters";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-export const DEFAULT_PAGES = [20, 50, 100];
+export const DEFAULT_PAGES = [10, 20, 50, 100] as const;
+export type PageSize = (typeof DEFAULT_PAGES)[number];
 
 export const NoDataDisplay = () => {
   return (
@@ -134,6 +135,7 @@ export type DataTableProps<Data extends object> = {
   initialSortingState?: SortingState;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
+  initialPageSize: PageSize;
   filterIsOpen?: boolean;
 };
 
@@ -146,6 +148,7 @@ export function DataTable<Data extends object>({
   initialSortingState = [],
   initialColumnVisibility = {},
   initialColumnFilters = [],
+  initialPageSize = DEFAULT_PAGES[1],
   filterIsOpen = false,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(initialSortingState);
@@ -161,7 +164,7 @@ export function DataTable<Data extends object>({
   const table = useReactTable({
     columns,
     data: data || [],
-    initialState: { pagination: { pageSize: DEFAULT_PAGES[0] } },
+    initialState: { pagination: { pageSize: initialPageSize } },
     autoResetPageIndex: false,
     state: {
       sorting,
