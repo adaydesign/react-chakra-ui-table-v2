@@ -137,6 +137,10 @@ export type DataTableProps<Data extends object> = {
   initialColumnFilters?: ColumnFiltersState;
   initialPageSize?: PageSize;
   filterIsOpen?: boolean;
+  onChangePageSize?: (newPageSize: PageSize) => void;
+  onSortingChange?: (filters: SortingState) => void;
+  onColumnVisibilityChange?: (filters: VisibilityState) => void;
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
 };
 
 export function DataTable<Data extends object>({
@@ -150,6 +154,10 @@ export function DataTable<Data extends object>({
   initialColumnFilters = [],
   initialPageSize = DEFAULT_PAGES[1],
   filterIsOpen = false,
+  onChangePageSize = () => {},
+  onSortingChange,
+  onColumnVisibilityChange,
+  onColumnFiltersChange,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(initialSortingState);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -172,16 +180,37 @@ export function DataTable<Data extends object>({
       columnFilters,
     },
     getCoreRowModel: getCoreRowModel(),
-    // sorting
-    onSortingChange: setSorting,
+    onSortingChange: (newFilters) => {
+      setSorting(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function" ? newFilters(sorting) : newFilters;
+      if (onSortingChange) {
+        onSortingChange(updatedFilters);
+      }
+    },
     getSortedRowModel: getSortedRowModel(),
-    // pagination
     getPaginationRowModel: getPaginationRowModel(),
-    // column visible
-    onColumnVisibilityChange: setColumnVisibility,
-    // column filter
+    onColumnVisibilityChange: (newFilters) => {
+      setColumnVisibility(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function"
+          ? newFilters(columnVisibility)
+          : newFilters;
+      if (onColumnVisibilityChange) {
+        onColumnVisibilityChange(updatedFilters);
+      }
+    },
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (newFilters) => {
+      setColumnFilters(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function"
+          ? newFilters(columnFilters)
+          : newFilters;
+      if (onColumnFiltersChange) {
+        onColumnFiltersChange(updatedFilters);
+      }
+    },
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
@@ -445,6 +474,7 @@ export function DataTable<Data extends object>({
                       size="sm"
                       onChange={(e) => {
                         table.setPageSize(Number(e.target.value));
+                        onChangePageSize(Number(e.target.value) as PageSize);
                       }}
                     >
                       {DEFAULT_PAGES.map((pageSize, index) => (
