@@ -278,60 +278,69 @@ export function DataTable<Data extends object>({
                                 ))}
                             </Box>
                           </HStack>
-                          <Box w="1rem" display="flex" justifyContent="center">
-                            {filterDisclosure.isOpen && (
-                              <Menu closeOnSelect={false}>
-                                <MenuButton
-                                  as={IconButton}
-                                  icon={
-                                    header.column.getFilterValue() ===
-                                    undefined ? (
-                                      <SearchIcon />
-                                    ) : (
-                                      <Search2Icon />
-                                    )
-                                  }
-                                  isRound={true}
-                                  variant="ghost"
-                                  colorScheme={
-                                    header.column.getFilterValue() === undefined
-                                      ? "gray"
-                                      : "orange"
-                                  }
-                                  fontSize="1rem"
-                                  aria-label="column filter"
-                                  size="sm"
-                                />
-                                <MenuList p="0.5rem">
-                                  <Flex
-                                    w="full"
-                                    direction="column"
-                                    gap="0.5rem"
-                                  >
-                                    {header.column.getCanFilter() && (
-                                      <Flex>
-                                        <Filter
-                                          column={header.column}
-                                          table={table}
-                                        />
-                                      </Flex>
-                                    )}
-                                    <Button
-                                      rightIcon={<FaTrash />}
-                                      colorScheme="blue"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        header.column.setFilterValue(undefined)
-                                      }
+                          {!header.column.getCanFilter() ? null : (
+                            <Box
+                              w="1rem"
+                              display="flex"
+                              justifyContent="center"
+                            >
+                              {filterDisclosure.isOpen && (
+                                <Menu closeOnSelect={false}>
+                                  <MenuButton
+                                    as={IconButton}
+                                    icon={
+                                      header.column.getFilterValue() ===
+                                      undefined ? (
+                                        <SearchIcon />
+                                      ) : (
+                                        <Search2Icon />
+                                      )
+                                    }
+                                    isRound={true}
+                                    variant="ghost"
+                                    colorScheme={
+                                      header.column.getFilterValue() ===
+                                      undefined
+                                        ? "gray"
+                                        : "orange"
+                                    }
+                                    fontSize="1rem"
+                                    aria-label="column filter"
+                                    size="sm"
+                                  />
+                                  <MenuList p="0.5rem">
+                                    <Flex
+                                      w="full"
+                                      direction="column"
+                                      gap="0.5rem"
                                     >
-                                      Reset
-                                    </Button>
-                                  </Flex>
-                                </MenuList>
-                              </Menu>
-                            )}
-                          </Box>
+                                      {header.column.getCanFilter() && (
+                                        <Flex>
+                                          <Filter
+                                            column={header.column}
+                                            table={table}
+                                          />
+                                        </Flex>
+                                      )}
+                                      <Button
+                                        rightIcon={<FaTrash />}
+                                        colorScheme="blue"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() =>
+                                          header.column.setFilterValue(
+                                            undefined
+                                          )
+                                        }
+                                      >
+                                        Reset
+                                      </Button>
+                                    </Flex>
+                                  </MenuList>
+                                </Menu>
+                              )}
+                            </Box>
+                          )}
                         </Flex>
                       </Th>
                     );

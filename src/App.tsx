@@ -78,6 +78,7 @@ const TodoListTable = () => {
     }),
     columnHelper.accessor("bodySize", {
       cell: (info) => info.getValue()?.height,
+      enableColumnFilter: false,
       header: "Body Size",
     }),
   ];
