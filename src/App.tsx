@@ -19,6 +19,11 @@ type TodoItem = {
   date: Date;
   hairColor: HairColor;
   foods: string[];
+  bodySize: {
+    height: number;
+    waist: number;
+    shoulders: number;
+  };
 };
 
 enum HairColor {
@@ -71,6 +76,11 @@ const TodoListTable = () => {
       header: "Eats",
       filterFn: arrayFilterFn,
     }),
+    columnHelper.accessor("bodySize", {
+      cell: (info) => info.getValue()?.height,
+      enableColumnFilter: false,
+      header: "Body Size",
+    }),
   ];
 
   const [data, setData] = useState(null);
@@ -87,6 +97,18 @@ const TodoListTable = () => {
       );
 
       const foods = ["meat", "vegan", "lactose"];
+
+      const bodySize = {
+        height: 180,
+        waist: 120,
+        shoulders: 140,
+      };
+      const bodySizeWithDefault = {
+        height: 180,
+        waist: 120,
+        shoulders: 140,
+        default: 222,
+      };
 
       if (result.length === 2) {
         // index 0 is user
@@ -109,17 +131,20 @@ const TodoListTable = () => {
             case 0:
               todo.hairColor = HairColor.BLONDE;
               todo.foods = foods.slice(0, 1);
+              todo.bodySize = bodySize;
 
               break;
 
             case 1:
               todo.hairColor = HairColor.BROWN;
               todo.foods = foods.slice(0, 2);
+              todo.bodySize = bodySizeWithDefault;
               break;
 
             case 2:
               todo.hairColor = HairColor.RED;
               todo.foods = foods.slice(0, 3);
+              todo.bodySize = null;
               break;
 
             default:

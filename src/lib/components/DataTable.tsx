@@ -70,7 +70,8 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { getNumformat } from "../utils/formatters";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-export const DEFAULT_PAGES = [20, 50, 100];
+export const DEFAULT_PAGES = [10, 20, 50, 100] as const;
+export type PageSize = (typeof DEFAULT_PAGES)[number];
 
 export const NoDataDisplay = () => {
   return (
@@ -134,7 +135,12 @@ export type DataTableProps<Data extends object> = {
   initialSortingState?: SortingState;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
+  initialPageSize?: PageSize;
   filterIsOpen?: boolean;
+  onChangePageSize?: (newPageSize: PageSize) => void;
+  onSortingChange?: (filters: SortingState) => void;
+  onColumnVisibilityChange?: (filters: VisibilityState) => void;
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
 };
 
 export function DataTable<Data extends object>({
@@ -146,7 +152,12 @@ export function DataTable<Data extends object>({
   initialSortingState = [],
   initialColumnVisibility = {},
   initialColumnFilters = [],
+  initialPageSize = DEFAULT_PAGES[1],
   filterIsOpen = false,
+  onChangePageSize = () => {},
+  onSortingChange,
+  onColumnVisibilityChange,
+  onColumnFiltersChange,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(initialSortingState);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -161,7 +172,7 @@ export function DataTable<Data extends object>({
   const table = useReactTable({
     columns,
     data: data || [],
-    initialState: { pagination: { pageSize: DEFAULT_PAGES[0] } },
+    initialState: { pagination: { pageSize: initialPageSize } },
     autoResetPageIndex: false,
     state: {
       sorting,
@@ -169,16 +180,37 @@ export function DataTable<Data extends object>({
       columnFilters,
     },
     getCoreRowModel: getCoreRowModel(),
-    // sorting
-    onSortingChange: setSorting,
+    onSortingChange: (newFilters) => {
+      setSorting(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function" ? newFilters(sorting) : newFilters;
+      if (onSortingChange) {
+        onSortingChange(updatedFilters);
+      }
+    },
     getSortedRowModel: getSortedRowModel(),
-    // pagination
     getPaginationRowModel: getPaginationRowModel(),
-    // column visible
-    onColumnVisibilityChange: setColumnVisibility,
-    // column filter
+    onColumnVisibilityChange: (newFilters) => {
+      setColumnVisibility(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function"
+          ? newFilters(columnVisibility)
+          : newFilters;
+      if (onColumnVisibilityChange) {
+        onColumnVisibilityChange(updatedFilters);
+      }
+    },
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (newFilters) => {
+      setColumnFilters(newFilters);
+      const updatedFilters =
+        typeof newFilters === "function"
+          ? newFilters(columnFilters)
+          : newFilters;
+      if (onColumnFiltersChange) {
+        onColumnFiltersChange(updatedFilters);
+      }
+    },
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
@@ -246,60 +278,69 @@ export function DataTable<Data extends object>({
                                 ))}
                             </Box>
                           </HStack>
-                          <Box w="1rem" display="flex" justifyContent="center">
-                            {filterDisclosure.isOpen && (
-                              <Menu closeOnSelect={false}>
-                                <MenuButton
-                                  as={IconButton}
-                                  icon={
-                                    header.column.getFilterValue() ===
-                                    undefined ? (
-                                      <SearchIcon />
-                                    ) : (
-                                      <Search2Icon />
-                                    )
-                                  }
-                                  isRound={true}
-                                  variant="ghost"
-                                  colorScheme={
-                                    header.column.getFilterValue() === undefined
-                                      ? "gray"
-                                      : "orange"
-                                  }
-                                  fontSize="1rem"
-                                  aria-label="column filter"
-                                  size="sm"
-                                />
-                                <MenuList p="0.5rem">
-                                  <Flex
-                                    w="full"
-                                    direction="column"
-                                    gap="0.5rem"
-                                  >
-                                    {header.column.getCanFilter() && (
-                                      <Flex>
-                                        <Filter
-                                          column={header.column}
-                                          table={table}
-                                        />
-                                      </Flex>
-                                    )}
-                                    <Button
-                                      rightIcon={<FaTrash />}
-                                      colorScheme="blue"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        header.column.setFilterValue(undefined)
-                                      }
+                          {!header.column.getCanFilter() ? null : (
+                            <Box
+                              w="1rem"
+                              display="flex"
+                              justifyContent="center"
+                            >
+                              {filterDisclosure.isOpen && (
+                                <Menu closeOnSelect={false}>
+                                  <MenuButton
+                                    as={IconButton}
+                                    icon={
+                                      header.column.getFilterValue() ===
+                                      undefined ? (
+                                        <SearchIcon />
+                                      ) : (
+                                        <Search2Icon />
+                                      )
+                                    }
+                                    isRound={true}
+                                    variant="ghost"
+                                    colorScheme={
+                                      header.column.getFilterValue() ===
+                                      undefined
+                                        ? "gray"
+                                        : "orange"
+                                    }
+                                    fontSize="1rem"
+                                    aria-label="column filter"
+                                    size="sm"
+                                  />
+                                  <MenuList p="0.5rem">
+                                    <Flex
+                                      w="full"
+                                      direction="column"
+                                      gap="0.5rem"
                                     >
-                                      Reset
-                                    </Button>
-                                  </Flex>
-                                </MenuList>
-                              </Menu>
-                            )}
-                          </Box>
+                                      {header.column.getCanFilter() && (
+                                        <Flex>
+                                          <Filter
+                                            column={header.column}
+                                            table={table}
+                                          />
+                                        </Flex>
+                                      )}
+                                      <Button
+                                        rightIcon={<FaTrash />}
+                                        colorScheme="blue"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() =>
+                                          header.column.setFilterValue(
+                                            undefined
+                                          )
+                                        }
+                                      >
+                                        Reset
+                                      </Button>
+                                    </Flex>
+                                  </MenuList>
+                                </Menu>
+                              )}
+                            </Box>
+                          )}
                         </Flex>
                       </Th>
                     );
@@ -442,6 +483,7 @@ export function DataTable<Data extends object>({
                       size="sm"
                       onChange={(e) => {
                         table.setPageSize(Number(e.target.value));
+                        onChangePageSize(Number(e.target.value) as PageSize);
                       }}
                     >
                       {DEFAULT_PAGES.map((pageSize, index) => (
@@ -497,6 +539,11 @@ function TableController<Data extends object>({
         if (value instanceof Date) {
           // Check if the value is a Date object
           originalRow[key] = value.toLocaleString(); // Convert the date to a locale string
+        } else if (value instanceof Object) {
+          // Check if the value is an object, if so use the property "default" or the first one
+          originalRow[key] = value.hasOwnProperty("default")
+            ? value["default"]
+            : Object.values(value)[0];
         }
       });
       return originalRow;
