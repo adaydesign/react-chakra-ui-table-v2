@@ -19,11 +19,10 @@ type TodoItem = {
   date: Date;
   hairColor: HairColor;
   foods: string[];
-  bodySize: {
-    height: number;
-    waist: number;
-    shoulders: number;
-  };
+  pets: {
+    animal: string;
+    age: number;
+  }[];
 };
 
 enum HairColor {
@@ -76,10 +75,14 @@ const TodoListTable = () => {
       header: "Eats",
       filterFn: arrayFilterFn,
     }),
-    columnHelper.accessor("bodySize", {
-      cell: (info) => info.getValue()?.height,
+    columnHelper.accessor("pets", {
+      cell: (info) =>
+        info
+          .getValue()
+          ?.map((pet: { animal: string }) => pet.animal)
+          ?.join(", "),
       enableColumnFilter: false,
-      header: "Body Size",
+      header: "Pets",
     }),
   ];
 
@@ -98,17 +101,24 @@ const TodoListTable = () => {
 
       const foods = ["meat", "vegan", "lactose"];
 
-      const bodySize = {
-        height: 180,
-        waist: 120,
-        shoulders: 140,
+      type Pet = {
+        animal: string;
+        age: number;
+        name: string;
+        default?: string; // Mark as optional initially
       };
-      const bodySizeWithDefault = {
-        height: 180,
-        waist: 120,
-        shoulders: 140,
-        default: 222,
-      };
+
+      const pets: Pet[] = [
+        { animal: "dog", age: 3, name: "Ralph" },
+        { animal: "cat", age: 7, name: "Whiskers" },
+        { animal: "fish", age: 1, name: "Nemo" },
+        { animal: "bird", age: 4, name: "Wings" },
+        { animal: "parrot", age: 22, name: "Jack" },
+      ];
+      // add default property equal to name
+      pets.forEach((pet) => {
+        pet.default = pet.name;
+      });
 
       if (result.length === 2) {
         // index 0 is user
@@ -131,20 +141,20 @@ const TodoListTable = () => {
             case 0:
               todo.hairColor = HairColor.BLONDE;
               todo.foods = foods.slice(0, 1);
-              todo.bodySize = bodySize;
+              todo.pets = pets.slice(0, 2);
 
               break;
 
             case 1:
               todo.hairColor = HairColor.BROWN;
               todo.foods = foods.slice(0, 2);
-              todo.bodySize = bodySizeWithDefault;
+              todo.pets = pets.slice(3, 4);
               break;
 
             case 2:
               todo.hairColor = HairColor.RED;
               todo.foods = foods.slice(0, 3);
-              todo.bodySize = null;
+              todo.pets = pets;
               break;
 
             default:

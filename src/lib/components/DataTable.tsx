@@ -67,7 +67,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { getNumformat } from "../utils/formatters";
+import { getNumformat, parseValueIntoString } from "../utils/formatters";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 export const DEFAULT_PAGES = [10, 20, 50, 100] as const;
@@ -535,16 +535,7 @@ function TableController<Data extends object>({
     const rowData = data.map((row) => {
       const originalRow: any = { ...row.original };
       Object.keys(originalRow).forEach((key) => {
-        const value = originalRow[key];
-        if (value instanceof Date) {
-          // Check if the value is a Date object
-          originalRow[key] = value.toLocaleString(); // Convert the date to a locale string
-        } else if (value instanceof Object) {
-          // Check if the value is an object, if so use the property "default" or the first one
-          originalRow[key] = value.hasOwnProperty("default")
-            ? value["default"]
-            : Object.values(value)[0];
-        }
+        originalRow[key] = parseValueIntoString(originalRow[key]); // Use the recursive function here
       });
       return originalRow;
     });
