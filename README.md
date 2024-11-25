@@ -226,4 +226,9 @@ web demo : https://chakra-table-v2.netlify.app/
 
 ## Demo Screenshot
 
-![Screenshot](https://raw.githubusercontent.com/adaydesign/react-chakra-ui-table-v2/main/public/demo.png)
+### v.2.1
+![Screenshot](/public/demo_v2_1.png)
+
+### v.2
+![Screenshot](/public/demo.png)
+
