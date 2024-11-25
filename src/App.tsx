@@ -1,5 +1,5 @@
-import { ChakraProvider, Flex, Link } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { Badge, ChakraProvider, Flex, HStack, Link } from "@chakra-ui/react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable, getSummary } from "./lib/components/DataTable";
 import { getNumformat } from "./lib";
@@ -32,6 +32,36 @@ enum HairColor {
   RED = "Red",
 }
 
+const foods = ["meat", "vegan", "lactose","egg"];
+
+// Example Component in Table
+type IBadgeProps = {
+  children:ReactNode
+}
+const HairColorBadge = ({children}:IBadgeProps) =>{
+  let c = "gray"
+  switch(children?.toString()){
+    case HairColor.BLONDE : c = "yellow"; break;
+    case HairColor.BROWN : c="orange"; break;
+    case HairColor.RED : c="red"; break;
+  }
+
+  return <Badge colorScheme={c} size="sm">{children}</Badge>
+}
+
+const FoodBadge = ({children}:IBadgeProps)=>{
+  let c = "gray"
+  switch(children?.toString()){
+    case "meat" : c = "orange"; break;
+    case "vegan" : c="green"; break;
+    case "lactose" : c="yellow"; break;
+    case "egg" : c="pink"; break;
+  }
+
+  return <Badge colorScheme={c} size="sm">{children}</Badge>
+}
+
+
 const columnHelper = createColumnHelper<TodoItem>();
 // Example Table
 const TodoListTable = () => {
@@ -59,12 +89,14 @@ const TodoListTable = () => {
       filterFn: booleanFilterFn,
     }),
     columnHelper.accessor("date", {
+      id:"html_date",
       cell: (info) => info.getValue().toLocaleString(),
       header: "Date",
       filterFn: dateRangeFilterFn,
     }),
     columnHelper.accessor("hairColor", {
-      cell: (info) => info.getValue(),
+      id:"html_hairColor",
+      cell: (info) => (<HairColorBadge>{info.getValue()}</HairColorBadge>),
       header: "Hair Color",
       meta: {
         columnType: "multienum",
@@ -72,11 +104,16 @@ const TodoListTable = () => {
       filterFn: multiEnumFilterFn,
     }),
     columnHelper.accessor("foods", {
-      cell: (info) => info.getValue(),
+      id:"html_foods",
+      cell: (info) => {
+        const foods = info.getValue()
+        return foods ? <HStack gap={1}>{foods.map(f=><FoodBadge>{f}</FoodBadge>)}</HStack>:"-";
+      },
       header: "Eats",
       filterFn: arrayFilterFn,
     }),
     columnHelper.accessor("bodySize", {
+      id:"html_bodySize",
       cell: (info) => info.getValue()?.height,
       enableColumnFilter: false,
       header: "Body Size",
@@ -95,8 +132,6 @@ const TodoListTable = () => {
       const result = await Promise.all(
         urls.map((url) => fetch(url).then((r) => r.json()))
       );
-
-      const foods = ["meat", "vegan", "lactose"];
 
       const bodySize = {
         height: 180,
@@ -130,28 +165,36 @@ const TodoListTable = () => {
           switch (index % 4) {
             case 0:
               todo.hairColor = HairColor.BLONDE;
-              todo.foods = foods.slice(0, 1);
               todo.bodySize = bodySize;
-
               break;
 
             case 1:
               todo.hairColor = HairColor.BROWN;
-              todo.foods = foods.slice(0, 2);
               todo.bodySize = bodySizeWithDefault;
               break;
 
             case 2:
               todo.hairColor = HairColor.RED;
-              todo.foods = foods.slice(0, 3);
               todo.bodySize = null;
               break;
 
             default:
               todo.hairColor = HairColor.RED;
-              todo.foods = [];
+              //todo.foods = [];
               break;
           }
+
+          // random food
+          const fCount = Math.floor(Math.random()*3)+1
+          const fList = []
+          let fCopy = [...foods]
+          for(let i=0; i<fCount; i++){
+            const fdId = Math.floor(Math.random()*fCopy.length)
+            fList.push(fCopy[fdId])
+            fCopy = fCopy.filter(v=>v!=fCopy[fdId])
+          } 
+          todo.foods = fList
+
           return todo;
         });
 
@@ -185,7 +228,7 @@ const TodoListTable = () => {
       <DataTable
         columns={columns}
         data={data}
-        title="Example Table by React Chakra UI Table v.2"
+        title="Example Table by React Chakra UI Table v.2.1"
         isLoading={isLoading}
         initialSortingState={[{ id: "name", desc: true }]}
         filterIsOpen={true}
