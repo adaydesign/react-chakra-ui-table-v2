@@ -59,18 +59,23 @@ import {
   Column,
   getFilteredRowModel,
   VisibilityState,
-  Row,
 } from "@tanstack/react-table";
 import { GoFilter, GoInbox, GoLinkExternal, GoTasklist } from "react-icons/go";
-import { FaFileCsv, FaPrint, FaRegFilePdf, FaTrash, FaRegFileExcel } from "react-icons/fa6";
+import {
+  FaFileCsv,
+  FaPrint,
+  FaRegFilePdf,
+  FaTrash,
+  FaRegFileExcel,
+} from "react-icons/fa6";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";
-import XLSX from "xlsx"
+import XLSX from "xlsx";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { getNumformat } from "../utils/formatters";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import ReactDOMServer from 'react-dom/server';
+import ReactDOMServer from "react-dom/server";
 
 export const DEFAULT_PAGES = [10, 20, 50, 100] as const;
 export type PageSize = (typeof DEFAULT_PAGES)[number];
@@ -534,22 +539,6 @@ function TableController<Data extends object>({
       });
 
     const headerNames = header.map((c) => c.name);
-    // const rowData = data.map((row) => {
-    //   const originalRow: any = { ...row.original };
-    //   Object.keys(originalRow).forEach((key) => {
-    //     const value = originalRow[key];
-    //     if (value instanceof Date) {
-    //       // Check if the value is a Date object
-    //       originalRow[key] = value.toLocaleString(); // Convert the date to a locale string
-    //     } else if (value instanceof Object) {
-    //       // Check if the value is an object, if so use the property "default" or the first one
-    //       originalRow[key] = value.hasOwnProperty("default")
-    //         ? value["default"]
-    //         : Object.values(value)[0];
-    //     }
-    //   });
-    //   return originalRow;
-    // });
 
     // CSV
     if (fileType === "csv" || fileType === "xlsx") {
@@ -560,45 +549,46 @@ function TableController<Data extends object>({
 
       // const csv = generateCsv(csvConfig)(rowData as any);
       // download(csvConfig)(csv);
-      const exportDataCSV = table.getRowModel().rows.map( (row:any) =>{
-        let rec:any = {}
-        row.getVisibleCells().map((cell:any)=>{
-          let col = cell.column.id + ""
-          let colName = cell.column.columnDef.header
-          
-          if(col.startsWith("html_")){
+      const exportDataCSV = table.getRowModel().rows.map((row: any) => {
+        let rec: any = {};
+        row.getVisibleCells().map((cell: any) => {
+          let col = cell.column.id + "";
+          let colName = cell.column.columnDef.header;
+
+          if (col.startsWith("html_")) {
             const cellHtmlString = ReactDOMServer.renderToStaticMarkup(
-              flexRender(cell.column.columnDef.cell, cell.getContext()) as React.ReactElement
+              flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext()
+              ) as React.ReactElement
             );
             const cellPlainText = stripHtmlTags(cellHtmlString);
-            return rec[colName] = cellPlainText
-          }else{
-            return rec[colName] = cell.renderValue()
+            return (rec[colName] = cellPlainText);
+          } else {
+            return (rec[colName] = cell.renderValue());
           }
+        });
+        return rec;
+      });
 
-        })
-        return rec
-      })
-
-      if(fileType=== "csv"){
+      if (fileType === "csv") {
         const csvConfig = mkConfig({
           columnHeaders: headerNames,
           filename: fileName,
-        } as any)
+        } as any);
 
-        const csv = generateCsv(csvConfig)(exportDataCSV)
-        download(csvConfig)(csv)
-
-      }else if(fileType === "xlsx"){
-        let wb = XLSX.utils.book_new()
+        const csv = generateCsv(csvConfig)(exportDataCSV);
+        download(csvConfig)(csv);
+      } else if (fileType === "xlsx") {
+        let wb = XLSX.utils.book_new();
         let ws1 = XLSX.utils.json_to_sheet(exportDataCSV, {
           header: headerNames,
-        } as any)
-        XLSX.utils.sheet_add_aoa(ws1, [headerNames], { origin: "A1" })
-        XLSX.utils.book_append_sheet(wb, ws1, "Sheet 1")
-        XLSX.writeFile(wb, `${fileName}.xlsx`)
+        } as any);
+        XLSX.utils.sheet_add_aoa(ws1, [headerNames], { origin: "A1" });
+        XLSX.utils.book_append_sheet(wb, ws1, "Sheet 1");
+        XLSX.writeFile(wb, `${fileName}.xlsx`);
         // Returning false as downloading of file is already taken care of
-        return false
+        return false;
       }
     }
     // PDF
@@ -609,20 +599,23 @@ function TableController<Data extends object>({
       //   return value;
       // });
       // data
-      const exportData = table.getRowModel().rows.map( (row:any) =>{
-        return row.getVisibleCells().map((cell:any)=>{
-          let col = cell.column.id + ""
-          if(col.startsWith("html_")){
+      const exportData = table.getRowModel().rows.map((row: any) => {
+        return row.getVisibleCells().map((cell: any) => {
+          let col = cell.column.id + "";
+          if (col.startsWith("html_")) {
             const cellHtmlString = ReactDOMServer.renderToStaticMarkup(
-              flexRender(cell.column.columnDef.cell, cell.getContext()) as React.ReactElement
+              flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext()
+              ) as React.ReactElement
             );
             const cellPlainText = stripHtmlTags(cellHtmlString);
-            return cellPlainText
-          }else{
-            return cell.renderValue()
+            return cellPlainText;
+          } else {
+            return cell.renderValue();
           }
-        })
-      })
+        });
+      });
 
       const unit = "pt";
       const size = "A4"; // Use A1, A2, A3 or A4
@@ -747,14 +740,14 @@ function TableController<Data extends object>({
               aria-label="export"
             />
             <MenuList>
-            <MenuItem
+              <MenuItem
                 icon={<FaRegFileExcel />}
                 onClick={() => {
                   getExportFileBlob(
                     table.getAllColumns(),
                     "xlsx",
                     "report-file"
-                  )
+                  );
                 }}
               >
                 Export to Excel
@@ -1127,5 +1120,5 @@ export const getSummary = (table: RETable<any>, field: string) => {
 
 // Utility function to remove HTML tags
 const stripHtmlTags = (htmlString: string) => {
-  return htmlString.replace(/<[^>]+>/g, '');
+  return htmlString.replace(/<[^>]+>/g, "");
 };

@@ -19,11 +19,10 @@ type TodoItem = {
   date: Date;
   hairColor: HairColor;
   foods: string[];
-  bodySize: {
-    height: number;
-    waist: number;
-    shoulders: number;
-  };
+  pets: {
+    animal: string;
+    age: number;
+  }[];
 };
 
 enum HairColor {
@@ -32,35 +31,71 @@ enum HairColor {
   RED = "Red",
 }
 
-const foods = ["meat", "vegan", "lactose","egg"];
+const foods = ["meat", "vegan", "lactose", "egg"];
+
+type Pet = {
+  animal: string;
+  age: number;
+  name: string;
+  default?: string; // Mark as optional initially
+};
+
+const pets: Pet[] = [
+  { animal: "dog", age: 3, name: "Ralph" },
+  { animal: "cat", age: 7, name: "Whiskers" },
+  { animal: "fish", age: 1, name: "Nemo" },
+  { animal: "bird", age: 4, name: "Wings" },
+  { animal: "parrot", age: 22, name: "Jack" },
+];
 
 // Example Component in Table
 type IBadgeProps = {
-  children:ReactNode
-}
-const HairColorBadge = ({children}:IBadgeProps) =>{
-  let c = "gray"
-  switch(children?.toString()){
-    case HairColor.BLONDE : c = "yellow"; break;
-    case HairColor.BROWN : c="orange"; break;
-    case HairColor.RED : c="red"; break;
+  children: ReactNode;
+};
+const HairColorBadge = ({ children }: IBadgeProps) => {
+  let c = "gray";
+  switch (children?.toString()) {
+    case HairColor.BLONDE:
+      c = "yellow";
+      break;
+    case HairColor.BROWN:
+      c = "orange";
+      break;
+    case HairColor.RED:
+      c = "red";
+      break;
   }
 
-  return <Badge colorScheme={c} size="sm">{children}</Badge>
-}
+  return (
+    <Badge colorScheme={c} size="sm">
+      {children}
+    </Badge>
+  );
+};
 
-const FoodBadge = ({children}:IBadgeProps)=>{
-  let c = "gray"
-  switch(children?.toString()){
-    case "meat" : c = "orange"; break;
-    case "vegan" : c="green"; break;
-    case "lactose" : c="yellow"; break;
-    case "egg" : c="pink"; break;
+const FoodBadge = ({ children }: IBadgeProps) => {
+  let c = "gray";
+  switch (children?.toString()) {
+    case "meat":
+      c = "orange";
+      break;
+    case "vegan":
+      c = "green";
+      break;
+    case "lactose":
+      c = "yellow";
+      break;
+    case "egg":
+      c = "pink";
+      break;
   }
 
-  return <Badge colorScheme={c} size="sm">{children}</Badge>
-}
-
+  return (
+    <Badge colorScheme={c} size="sm">
+      {children}
+    </Badge>
+  );
+};
 
 const columnHelper = createColumnHelper<TodoItem>();
 // Example Table
@@ -89,14 +124,14 @@ const TodoListTable = () => {
       filterFn: booleanFilterFn,
     }),
     columnHelper.accessor("date", {
-      id:"html_date",
+      id: "html_date",
       cell: (info) => info.getValue().toLocaleString(),
       header: "Date",
       filterFn: dateRangeFilterFn,
     }),
     columnHelper.accessor("hairColor", {
-      id:"html_hairColor",
-      cell: (info) => (<HairColorBadge>{info.getValue()}</HairColorBadge>),
+      id: "html_hairColor",
+      cell: (info) => <HairColorBadge>{info.getValue()}</HairColorBadge>,
       header: "Hair Color",
       meta: {
         columnType: "multienum",
@@ -104,19 +139,31 @@ const TodoListTable = () => {
       filterFn: multiEnumFilterFn,
     }),
     columnHelper.accessor("foods", {
-      id:"html_foods",
+      id: "html_foods",
       cell: (info) => {
-        const foods = info.getValue()
-        return foods ? <HStack gap={1}>{foods.map(f=><FoodBadge>{f}</FoodBadge>)}</HStack>:"-";
+        const foods = info.getValue();
+        return foods ? (
+          <HStack gap={1}>
+            {foods.map((f) => (
+              <FoodBadge>{f}</FoodBadge>
+            ))}
+          </HStack>
+        ) : (
+          "-"
+        );
       },
       header: "Eats",
       filterFn: arrayFilterFn,
     }),
-    columnHelper.accessor("bodySize", {
-      id:"html_bodySize",
-      cell: (info) => info.getValue()?.height,
-      enableColumnFilter: false,
-      header: "Body Size",
+    columnHelper.accessor("pets", {
+      id: "html_pets",
+      cell: (info) =>
+        info
+          .getValue()
+          ?.map((pet: { animal: string }) => pet.animal)
+          ?.join(", "),
+      enableColumnFilter: false, // no filter or add your own for objects
+      header: "Pets",
     }),
   ];
 
@@ -133,17 +180,10 @@ const TodoListTable = () => {
         urls.map((url) => fetch(url).then((r) => r.json()))
       );
 
-      const bodySize = {
-        height: 180,
-        waist: 120,
-        shoulders: 140,
-      };
-      const bodySizeWithDefault = {
-        height: 180,
-        waist: 120,
-        shoulders: 140,
-        default: 222,
-      };
+      // add default property equal to name
+      pets.forEach((pet) => {
+        pet.default = pet.name;
+      });
 
       if (result.length === 2) {
         // index 0 is user
@@ -165,17 +205,20 @@ const TodoListTable = () => {
           switch (index % 4) {
             case 0:
               todo.hairColor = HairColor.BLONDE;
-              todo.bodySize = bodySize;
+              todo.foods = foods.slice(0, 1);
+              todo.pets = pets.slice(0, 2);
               break;
 
             case 1:
               todo.hairColor = HairColor.BROWN;
-              todo.bodySize = bodySizeWithDefault;
+              todo.foods = foods.slice(0, 2);
+              todo.pets = pets.slice(3, 4);
               break;
 
             case 2:
               todo.hairColor = HairColor.RED;
-              todo.bodySize = null;
+              todo.foods = foods.slice(0, 3);
+              todo.pets = pets;
               break;
 
             default:
@@ -185,15 +228,15 @@ const TodoListTable = () => {
           }
 
           // random food
-          const fCount = Math.floor(Math.random()*3)+1
-          const fList = []
-          let fCopy = [...foods]
-          for(let i=0; i<fCount; i++){
-            const fdId = Math.floor(Math.random()*fCopy.length)
-            fList.push(fCopy[fdId])
-            fCopy = fCopy.filter(v=>v!=fCopy[fdId])
-          } 
-          todo.foods = fList
+          const fCount = Math.floor(Math.random() * 3) + 1;
+          const fList = [];
+          let fCopy = [...foods];
+          for (let i = 0; i < fCount; i++) {
+            const fdId = Math.floor(Math.random() * fCopy.length);
+            fList.push(fCopy[fdId]);
+            fCopy = fCopy.filter((v) => v != fCopy[fdId]);
+          }
+          todo.foods = fList;
 
           return todo;
         });
