@@ -1,4 +1,4 @@
-# React Chakra UI Table v2
+# React Chakra UI Table v2.1
 
 ## Features
 
@@ -7,10 +7,11 @@
 - Tanstack Table V.8
 - Custom Title, Columns and Data
 - Custom Pagination
-- Filter and Sorting in columns
+- Filter and Sorting in columns with New UI!
 - Show or Hide columns
-- Export data to CSV and PDF file
+- Export data to Excel, CSV and PDF file
 - Print
+- use column `id` start with `html_` to display plain text
 
 ## Pre Requirement Installation
 
@@ -28,6 +29,7 @@ Copy dependencies below to package.json
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.1",
     "react-icons": "^4.11.0",
+     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz",
 
     (... your dependencies ...)
 }
@@ -88,6 +90,21 @@ const TodoListTable = () => {
       cell: (info) => (info.getValue() ? "✅" : "❌"),
       header: "Completed",
     }),
+    columnHelper.accessor("date", {
+      id:"html_date",
+      cell: (info) => info.getValue().toLocaleString(),
+      header: "Date",
+      filterFn: dateRangeFilterFn,
+    }),
+     columnHelper.accessor("hairColor", {
+      id:"html_hairColor",
+      cell: (info) => (<HairColorBadge>{info.getValue()}</HairColorBadge>),
+      header: "Hair Color",
+      meta: {
+        columnType: "multienum",
+      },
+      filterFn: multiEnumFilterFn,
+    })
   ]
 
   const [data, setData] = useState(null)
@@ -209,4 +226,9 @@ web demo : https://chakra-table-v2.netlify.app/
 
 ## Demo Screenshot
 
-![Screenshot](https://raw.githubusercontent.com/adaydesign/react-chakra-ui-table-v2/main/public/demo.png)
+### v.2.1
+![Screenshot](/public/demo_v2_1.png)
+
+### v.2
+![Screenshot](/public/demo.png)
+
